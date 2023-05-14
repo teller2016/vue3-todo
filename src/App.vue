@@ -3,29 +3,7 @@
     <!-- header -->
     <h2>TODO LIST</h2>
 
-    <!-- form -->
-    <form @submit.prevent="onSubmit">
-      <div class="d-flex">
-        <!-- input -->
-        <div class="flex-grow-1 mr-2">
-          <input
-            class="form-control"
-            type="text"
-            v-model="todo"
-            placeholder="Type new TODO"
-          />
-        </div>
-
-        <!-- submit button -->
-        <div>
-          <button class="btn btn-primary" type="submit">Add</button>
-        </div>
-      </div>
-
-      <div v-show="hasError" style="color: red" class="mt-1">
-        TODO를 입력해주세요.
-      </div>
-    </form>
+    <TodoSimpleFormVue @add-todo="addTodo"></TodoSimpleFormVue>
 
     <!-- empty case -->
     <div v-if="!todos.length" style="color: blue" class="mt-2">
@@ -62,10 +40,13 @@
 
 <script>
 import { ref } from "vue";
+import TodoSimpleFormVue from "./components/TodoSimpleForm.vue";
 
 export default {
+  components: {
+    TodoSimpleFormVue,
+  },
   setup() {
-    const todo = ref("");
     const todos = ref([
       {
         id: 1,
@@ -78,23 +59,9 @@ export default {
         completed: false,
       },
     ]);
-    const hasError = ref(false);
 
-    // TODO ADD 이벤트
-    const onSubmit = () => {
-      if (!todo.value) {
-        hasError.value = true;
-      } else {
-        todos.value.push({
-          id: Date.now(),
-          subject: todo.value,
-          completed: false,
-        });
-        hasError.value = false;
-
-        // 입력 완료시 빈값처리
-        todo.value = "";
-      }
+    const addTodo = (todo) => {
+      todos.value.push(todo);
     };
 
     // TODO Delete 이벤트
@@ -103,11 +70,9 @@ export default {
     };
 
     return {
-      todo,
       todos,
-      onSubmit,
       deleteTodo,
-      hasError,
+      addTodo,
     };
   },
 };
