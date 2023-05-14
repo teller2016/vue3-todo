@@ -2,8 +2,8 @@
   <div class="container">
     <!-- header -->
     <h2>TODO LIST</h2>
-
-    <TodoSimpleFormVue @add-todo="addTodo"></TodoSimpleFormVue>
+    <!-- TODO 추가 Form -->
+    <TodoSimpleForm @add-todo="addTodo"></TodoSimpleForm>
 
     <!-- empty case -->
     <div v-if="!todos.length" style="color: blue" class="mt-2">
@@ -11,42 +11,26 @@
     </div>
 
     <!-- TODO 목록 -->
-    <div class="card mt-2" v-for="(todo, index) in todos" :key="todo.id">
-      <div class="card-body p-2 d-flex align-items-center">
-        <div class="form-check flex-grow-1">
-          <!-- checkbox -->
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="todo.completed"
-          />
-          <label class="form-check-label" :class="{ todo: todo.completed }">{{
-            todo.subject
-          }}</label>
-        </div>
-        <div>
-          <button
-            type="button"
-            class="btn btn-danger btn-sm"
-            @click="deleteTodo(index)"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
+    <TodoList
+      :todos="todos"
+      @delete-todo="deleteTodo"
+      @toggle-completed="toggleCompleted"
+    ></TodoList>
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
-import TodoSimpleFormVue from "./components/TodoSimpleForm.vue";
+import TodoSimpleForm from "./components/TodoSimpleForm.vue";
+import TodoList from "./components/TodoList.vue";
 
 export default {
   components: {
-    TodoSimpleFormVue,
+    TodoSimpleForm,
+    TodoList,
   },
   setup() {
+    // todo 데이터
     const todos = ref([
       {
         id: 1,
@@ -60,8 +44,14 @@ export default {
       },
     ]);
 
+    // TODO 추가 이벤트
     const addTodo = (todo) => {
       todos.value.push(todo);
+    };
+
+    // TODO 완료 상태 toggle
+    const toggleCompleted = (index) => {
+      todos.value[index].completed = !todos.value[index].completed;
     };
 
     // TODO Delete 이벤트
@@ -71,16 +61,12 @@ export default {
 
     return {
       todos,
-      deleteTodo,
       addTodo,
+      toggleCompleted,
+      deleteTodo,
     };
   },
 };
 </script>
 
-<style>
-.todo {
-  color: gray;
-  text-decoration: line-through;
-}
-</style>
+<style></style>
