@@ -46,24 +46,29 @@ export default {
   },
   setup() {
     // todo 데이터
-    const todos = ref([
-      {
-        id: 1,
-        subject: "todo1",
-        completed: true,
-      },
-      {
-        id: 2,
-        subject: "todo2",
-        completed: false,
-      },
-    ]);
+    const todos = ref([]);
 
     // 에러
     const error = ref("");
 
     // 검색
     const searchText = ref("");
+
+    const url = "http://localhost:3000/todos";
+
+    // get todos
+    const getTodos = async () => {
+      try {
+        const res = await axios.get(url);
+        todos.value = res.data;
+      } catch (error) {
+        error.value = "에러발생";
+      }
+    };
+
+    getTodos();
+
+    // 검색 필터링된 todos
     const filteredTodos = computed(() => {
       if (searchText.value) {
         return todos.value.filter((todo) => {
@@ -75,32 +80,48 @@ export default {
     });
 
     // TODO 추가 이벤트
-    const addTodo = (todo) => {
+    const addTodo = async (todo) => {
       error.value = "";
 
       // DB에 todo 저장
-      axios
-        .post("http://localhost:3000/todos", {
+      try {
+        const res = await axios.post(url, {
           subject: todo.subject,
           completed: todo.completed,
-        })
-        .then((res) => {
-          todos.value.push(res.data);
-        })
-        .catch((error) => {
-          error.value = "에러 발생";
-          console.log(error);
         });
+        todos.value.push(res.data);
+      } catch (error) {
+        console.log(error);
+        error.value = "에러 발생";
+      }
     };
 
     // TODO 완료 상태 toggle
-    const toggleCompleted = (index) => {
-      todos.value[index].completed = !todos.value[index].completed;
+    const toggleCompleted = async (index) => {
+      error.value = "";
+      const id = todos.value[index].id;
+
+      try {
+        await axios.patch(`${url}/${id}`, {
+          completed: !todos.value[index].completed,
+        });
+        todos.value[index].completed = !todos.value[index].completed;
+      } catch (error) {
+        error.value = "에러발생";
+      }
     };
 
     // TODO Delete 이벤트
-    const deleteTodo = (index) => {
-      todos.value.splice(index, 1);
+    const deleteTodo = async (index) => {
+      error.value = "";
+      const id = todos.value[index].id;
+
+      try {
+        await axios.delete(`${url}/${id}`);
+        todos.value.splice(index, 1);
+      } catch (error) {
+        error.value = "에러발생";
+      }
     };
 
     return {
