@@ -96,7 +96,7 @@ export default {
       currentPage.value = page;
       try {
         const res = await axios.get(
-          `${url}?subject_like=${searchText.value}&_page=${page}&_limit=${limit}`
+          `${url}?_sort=id&_order=desc&subject_like=${searchText.value}&_page=${page}&_limit=${limit}`
         );
         todos.value = res.data;
         numberOfTodos.value = res.headers["x-total-count"];
@@ -112,11 +112,12 @@ export default {
 
       // DB에 todo 저장
       try {
-        const res = await axios.post(url, {
+        await axios.post(url, {
           subject: todo.subject,
           completed: todo.completed,
         });
-        todos.value.push(res.data);
+
+        getTodos(1);
       } catch (error) {
         console.log(error);
         error.value = "에러 발생";
@@ -145,7 +146,7 @@ export default {
 
       try {
         await axios.delete(`${url}/${id}`);
-        todos.value.splice(index, 1);
+        getTodos(1);
       } catch (error) {
         error.value = "에러발생";
       }
