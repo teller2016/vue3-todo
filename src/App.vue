@@ -20,13 +20,13 @@
     <div style="color: red">{{ error }}</div>
 
     <!-- empty case -->
-    <div v-if="!filteredTodos.length" style="color: blue" class="mt-2">
+    <div v-if="!todos.length" style="color: blue" class="mt-2">
       TODO가 없습니다
     </div>
 
     <!-- TODO 목록 -->
     <TodoList
-      :todos="filteredTodos"
+      :todos="todos"
       @delete-todo="deleteTodo"
       @toggle-completed="toggleCompleted"
     ></TodoList>
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { ref, computed, watchEffect } from "vue";
+import { ref, computed, watch } from "vue";
 import TodoSimpleForm from "./components/TodoSimpleForm.vue";
 import TodoList from "./components/TodoList.vue";
 import axios from "axios";
@@ -73,22 +73,19 @@ export default {
   setup() {
     // todo 데이터
     const todos = ref([]);
-
     // 에러
     const error = ref("");
-
     // 검색
     const searchText = ref("");
+    watch(searchText, () => {
+      getTodos();
+    });
 
     const url = "http://localhost:3000/todos";
     // 페이지 개수
     const numberOfTodos = ref(0);
     const limit = 5;
     const currentPage = ref(1);
-
-    watchEffect(() => {
-      console.log(currentPage.value);
-    });
 
     const numberOfPages = computed(() => {
       return Math.ceil(numberOfTodos.value / limit);
@@ -98,26 +95,16 @@ export default {
     const getTodos = async (page = currentPage.value) => {
       currentPage.value = page;
       try {
-        const res = await axios.get(`${url}?_page=${page}&_limit=${limit}`);
+        const res = await axios.get(
+          `${url}?subject_like=${searchText.value}&_page=${page}&_limit=${limit}`
+        );
         todos.value = res.data;
         numberOfTodos.value = res.headers["x-total-count"];
       } catch (error) {
         error.value = "에러발생";
       }
     };
-
     getTodos();
-
-    // 검색 필터링된 todos
-    const filteredTodos = computed(() => {
-      if (searchText.value) {
-        return todos.value.filter((todo) => {
-          return todo.subject.includes(searchText.value);
-        });
-      }
-
-      return todos.value;
-    });
 
     // TODO 추가 이벤트
     const addTodo = async (todo) => {
@@ -167,7 +154,6 @@ export default {
     return {
       todos,
       searchText,
-      filteredTodos,
       getTodos,
       addTodo,
       toggleCompleted,
