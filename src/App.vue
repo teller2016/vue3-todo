@@ -30,11 +30,37 @@
       @delete-todo="deleteTodo"
       @toggle-completed="toggleCompleted"
     ></TodoList>
+
+    <hr />
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li v-if="currentPage !== 1" class="page-item">
+          <a class="page-link" href="#" @click="getTodos(currentPage - 1)"
+            >Previous</a
+          >
+        </li>
+        <li
+          v-for="page in numberOfPages"
+          :key="page"
+          :class="{ active: currentPage == page }"
+          class="page-item"
+        >
+          <a class="page-link" href="#" @click="getTodos(page)">{{ page }}</a>
+        </li>
+        <li v-if="currentPage !== numberOfPages" class="page-item">
+          <a class="page-link" href="#" @click="getTodos(currentPage + 1)"
+            >Next</a
+          >
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import TodoSimpleForm from "./components/TodoSimpleForm.vue";
 import TodoList from "./components/TodoList.vue";
 import axios from "axios";
@@ -55,12 +81,26 @@ export default {
     const searchText = ref("");
 
     const url = "http://localhost:3000/todos";
+    // 페이지 개수
+    const numberOfTodos = ref(0);
+    const limit = 5;
+    const currentPage = ref(1);
+
+    watchEffect(() => {
+      console.log(currentPage.value);
+    });
+
+    const numberOfPages = computed(() => {
+      return Math.ceil(numberOfTodos.value / limit);
+    });
 
     // get todos
-    const getTodos = async () => {
+    const getTodos = async (page = currentPage.value) => {
+      currentPage.value = page;
       try {
-        const res = await axios.get(url);
+        const res = await axios.get(`${url}?_page=${page}&_limit=${limit}`);
         todos.value = res.data;
+        numberOfTodos.value = res.headers["x-total-count"];
       } catch (error) {
         error.value = "에러발생";
       }
@@ -128,10 +168,13 @@ export default {
       todos,
       searchText,
       filteredTodos,
+      getTodos,
       addTodo,
       toggleCompleted,
       deleteTodo,
       error,
+      numberOfPages,
+      currentPage,
     };
   },
 };
