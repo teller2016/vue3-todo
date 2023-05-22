@@ -8,7 +8,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "home",
+      name: "Home",
       component: Home,
     },
     {
@@ -18,7 +18,7 @@ const router = createRouter({
     },
     {
       path: "/todos/:id",
-      name: "todo",
+      name: "Todo",
       component: Todo,
     },
   ],

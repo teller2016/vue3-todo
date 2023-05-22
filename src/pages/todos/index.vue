@@ -137,15 +137,15 @@ export default {
     };
 
     // TODO 완료 상태 toggle
-    const toggleCompleted = async (index) => {
+    const toggleCompleted = async (index, checked) => {
       error.value = "";
       const id = todos.value[index].id;
 
       try {
         await axios.patch(`${url}/${id}`, {
-          completed: !todos.value[index].completed,
+          completed: checked,
         });
-        todos.value[index].completed = !todos.value[index].completed;
+        todos.value[index].completed = checked;
       } catch (error) {
         error.value = "에러발생";
       }
