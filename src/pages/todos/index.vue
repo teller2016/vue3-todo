@@ -1,6 +1,5 @@
 <template>
-  <router-view />
-  <div class="container">
+  <div>
     <!-- header -->
     <h2>TODO LIST</h2>
 
