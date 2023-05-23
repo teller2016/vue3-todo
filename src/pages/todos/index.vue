@@ -58,6 +58,12 @@
       </ul>
     </nav>
   </div>
+
+  <Toast
+    v-if="showToast"
+    :message="toastMessage"
+    :type="toastAlertType"
+  ></Toast>
 </template>
 
 <script>
@@ -65,11 +71,14 @@ import { ref, computed, watch } from "vue";
 import TodoSimpleForm from "@/components/TodoSimpleForm.vue";
 import TodoList from "@/components/TodoList.vue";
 import axios from "axios";
+import Toast from "@/components/Toast.vue";
+import { useToast } from "../../composables/toast";
 
 export default {
   components: {
     TodoSimpleForm,
     TodoList,
+    Toast,
   },
   setup() {
     // todo 데이터
@@ -92,6 +101,8 @@ export default {
       getTodos(1);
     };
 
+    const { showToast, toastMessage, triggerToast } = useToast();
+
     const url = "http://localhost:3000/todos";
     // 페이지 개수
     const numberOfTodos = ref(0);
@@ -113,6 +124,7 @@ export default {
         numberOfTodos.value = res.headers["x-total-count"];
       } catch (error) {
         error.value = "에러발생";
+        triggerToast("Server Error!", "danger");
       }
     };
     getTodos();
@@ -132,6 +144,7 @@ export default {
       } catch (error) {
         console.log(error);
         error.value = "에러 발생";
+        triggerToast("Server Error!", "danger");
       }
     };
 
@@ -147,6 +160,7 @@ export default {
         todos.value[index].completed = checked;
       } catch (error) {
         error.value = "에러발생";
+        triggerToast("Server Error!", "danger");
       }
     };
 
@@ -160,6 +174,7 @@ export default {
         getTodos(1);
       } catch (error) {
         error.value = "에러발생";
+        triggerToast("Server Error!", "danger");
       }
     };
 
@@ -174,6 +189,8 @@ export default {
       numberOfPages,
       currentPage,
       searchTodo,
+      showToast,
+      toastMessage,
     };
   },
 };

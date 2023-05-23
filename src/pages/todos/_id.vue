@@ -38,6 +38,12 @@
       Cancel
     </button>
   </form>
+
+  <Toast
+    v-if="showToast"
+    :message="toastMessage"
+    :type="toastAlertType"
+  ></Toast>
 </template>
 
 <script>
@@ -45,7 +51,13 @@ import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import _ from "lodash";
+import Toast from "@/components/Toast.vue";
+import { useToast } from "../../composables/toast";
+
 export default {
+  components: {
+    Toast,
+  },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -65,14 +77,19 @@ export default {
         loading.value = false;
       } catch (error) {
         console.log(error);
+        triggerToast("Server Error!", "danger");
       }
     };
     getTodo();
 
+    const { showToast, toastMessage, triggerToast } = useToast();
+
+    // todo update된 상태인지 판별
     const todoUpdated = computed(() => {
       return !_.isEqual(originalTodo.value, todo.value);
     });
 
+    // todo completed 상태 변경
     const toggleTodoStatus = () => {
       todo.value.completed = !todo.value.completed;
     };
@@ -83,6 +100,7 @@ export default {
       });
     };
 
+    // 저장시
     const onSave = async () => {
       try {
         const res = await axios.put(`${url}/${todoId}`, {
@@ -91,12 +109,14 @@ export default {
         });
 
         originalTodo.value = { ...res.data };
+        triggerToast("Successfully Saved!");
 
         // router.push({
         //   name: "Todos",
         // });
       } catch (error) {
         console.log(error);
+        triggerToast("Server Error!", "danger");
       }
     };
 
@@ -107,6 +127,8 @@ export default {
       moveToTodoListPage,
       onSave,
       todoUpdated,
+      showToast,
+      toastMessage,
     };
   },
 };
