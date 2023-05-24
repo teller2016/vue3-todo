@@ -1,11 +1,11 @@
 <template>
-  <h2>TODO Page</h2>
-
-  <TodoForm :editing="true"></TodoForm>
+  <h2>Create Todo</h2>
+  <TodoForm></TodoForm>
 </template>
 
 <script>
 import TodoForm from "@/components/TodoForm.vue";
+
 export default {
   components: {
     TodoForm,
