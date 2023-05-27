@@ -169,9 +169,9 @@ export default {
     };
 
     // TODO Delete 이벤트
-    const deleteTodo = async (index) => {
+    const deleteTodo = async (todoId) => {
       error.value = "";
-      const id = todos.value[index].id;
+      const id = todoId;
 
       try {
         await axios.delete(`${url}/${id}`);

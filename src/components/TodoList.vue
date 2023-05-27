@@ -30,16 +30,20 @@
       </div>
     </div>
   </div>
-  <Modal v-if="showModal" @close="closeModal"></Modal>
+  
+  <teleport to="#molly">
+    <DeleteModal v-if="showModal" @close="closeModal" @delete="deleteTodo">
+    </DeleteModal>
+  </teleport>
 </template>
 
 <script>
 import { useRouter } from "vue-router";
-import Modal from '@/components/Modal.vue';
+import DeleteModal from '@/components/DeleteModal.vue';
 import {ref} from 'vue';
 export default {
   components: {
-    Modal,
+    DeleteModal,
   },
   props: {
     todos: {
@@ -63,8 +67,9 @@ export default {
       showModal.value = false;
     };
 
-    const deleteTodo = (index) => {
-      context.emit("delete-todo", index);
+    const deleteTodo = () => {
+      context.emit("delete-todo", todoDeleteId.value);
+      showModal.value = false;
     };
 
     const toggleCompleted = (index, event) => {

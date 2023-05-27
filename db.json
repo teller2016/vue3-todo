@@ -76,18 +76,6 @@
       "id": 18
     },
     {
-      "subject": "buy test",
-      "completed": false,
-      "body": "this is body",
-      "id": 19
-    },
-    {
-      "subject": "test body",
-      "completed": false,
-      "body": "bodybodybody",
-      "id": 20
-    },
-    {
       "subject": "asdf",
       "completed": false,
       "body": "asdfasdf",
@@ -98,12 +86,6 @@
       "completed": false,
       "body": "asf",
       "id": 22
-    },
-    {
-      "subject": "sssss",
-      "completed": false,
-      "body": "asdffgggggssssfffssssdf",
-      "id": 23
     }
   ]
 }
