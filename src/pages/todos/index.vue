@@ -72,7 +72,7 @@
 <script>
 import { ref, computed, watch } from "vue";
 import TodoList from "@/components/TodoList.vue";
-import axios from "axios";
+import axios from "@/axios";
 import Toast from "@/components/Toast.vue";
 import { useToast } from "../../composables/toast";
 import { useRouter } from "vue-router";
@@ -107,7 +107,6 @@ export default {
 
     const { showToast, toastMessage, triggerToast } = useToast();
 
-    const url = "http://localhost:3000/todos";
     // 페이지 개수
     const numberOfTodos = ref(0);
     const limit = 5;
@@ -122,7 +121,7 @@ export default {
       currentPage.value = page;
       try {
         const res = await axios.get(
-          `${url}?_sort=id&_order=desc&subject_like=${searchText.value}&_page=${page}&_limit=${limit}`
+          `todos?_sort=id&_order=desc&subject_like=${searchText.value}&_page=${page}&_limit=${limit}`
         );
         todos.value = res.data;
         numberOfTodos.value = res.headers["x-total-count"];
@@ -139,7 +138,7 @@ export default {
 
       // DB에 todo 저장
       try {
-        await axios.post(url, {
+        await axios.post('todos', {
           subject: todo.subject,
           completed: todo.completed,
         });
@@ -158,7 +157,7 @@ export default {
       const id = todos.value[index].id;
 
       try {
-        await axios.patch(`${url}/${id}`, {
+        await axios.patch(`todos/${id}`, {
           completed: checked,
         });
         todos.value[index].completed = checked;
@@ -174,7 +173,7 @@ export default {
       const id = todoId;
 
       try {
-        await axios.delete(`${url}/${id}`);
+        await axios.delete(`todos/${id}`);
         getTodos(1);
       } catch (error) {
         error.value = "에러발생";

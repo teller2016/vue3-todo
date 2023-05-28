@@ -3,13 +3,14 @@
   <form v-else @submit.prevent="onSave">
     <div class="row">
       <div class="col-6">
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label>subject</label>
           <input type="text" class="form-control" v-model="todo.subject" />
           <div v-if="subjectError" class="text-red">
             {{ subjectError }}
           </div>
-        </div>
+        </div> -->
+        <Input v-model:subject="todo.subject" title="Subject" :error="subjectError"/>
       </div>
 
       <div v-if="editing" class="col-6">
@@ -65,16 +66,18 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "@/axios";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import _ from "lodash";
 import Toast from "@/components/Toast.vue";
 import { useToast } from "@/composables/toast";
+import Input from "@/components/Input.vue";
 
 export default {
   components: {
     Toast,
+    Input
   },
   props: {
     editing: {
@@ -85,7 +88,6 @@ export default {
   setup(props) {
     const route = useRoute();
     const router = useRouter();
-    const url = "http://localhost:3000/todos";
     const originalTodo = ref(null);
     const todo = ref({
       subject: "",
@@ -100,7 +102,7 @@ export default {
     const getTodo = async () => {
       loading.value = true;
       try {
-        const res = await axios.get(`${url}/${todoId}`);
+        const res = await axios.get(`todos/${todoId}`);
 
         originalTodo.value = { ...res.data };
         todo.value = { ...res.data };
@@ -153,10 +155,10 @@ export default {
         };
 
         if (props.editing) {
-          res = await axios.put(`${url}/${todoId}`, data);
+          res = await axios.put(`todos/${todoId}`, data);
           originalTodo.value = { ...res.data };
         } else {
-          res = await axios.post(`${url}`, data);
+          res = await axios.post('todos', data);
 
           //   new todo 받도록 비움
           todo.value.subject = "";
