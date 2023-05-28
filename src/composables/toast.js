@@ -13,7 +13,7 @@ export const useToast = () => {
 
   // Toast 노출
   const triggerToast = (message, type = "success") => {
-    store.dispatch('toast/triggerToast', message, type);
+    store.dispatch('toast/triggerToast', {message, type});
   };
 
   return {

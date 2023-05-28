@@ -38,34 +38,14 @@
     <hr />
 
     <!-- 페이지네이션 -->
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li v-if="currentPage !== 1" class="page-item">
-          <a class="page-link" href="#" @click="getTodos(currentPage - 1)"
-            >Previous</a
-          >
-        </li>
-        <li
-          v-for="page in numberOfPages"
-          :key="page"
-          :class="{ active: currentPage == page }"
-          class="page-item"
-        >
-          <a class="page-link" href="#" @click="getTodos(page)">{{ page }}</a>
-        </li>
-        <li v-if="currentPage !== numberOfPages" class="page-item">
-          <a class="page-link" href="#" @click="getTodos(currentPage + 1)"
-            >Next</a
-          >
-        </li>
-      </ul>
-    </nav>
+    <Pagination v-if="todos.length" :currentPage="currentPage" :numberOfPages="numberOfPages" @click="getTodos"/>
   </div>
 </template>
 
 <script>
 import { ref, computed, watch } from "vue";
 import TodoList from "@/components/TodoList.vue";
+import Pagination from "@/components/Pagination.vue";
 import axios from "@/axios";
 import { useToast } from "../../composables/toast";
 import { useRouter } from "vue-router";
@@ -73,6 +53,7 @@ import { useRouter } from "vue-router";
 export default {
   components: {
     TodoList,
+    Pagination,
   },
   setup() {
     const router = useRouter();

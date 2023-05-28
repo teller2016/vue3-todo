@@ -24,15 +24,15 @@ export default {
         // },
     },
     actions: {
-        triggerToast({commit}, message, type = "success") {
-            // commit('UPDATE_TOAST_MESSAGE', message);
-            // commit('UPDATE__TOAST_ALERT_TYPE', type);
+        triggerToast({commit}, payload) {
+            // commit('UPDATE_TOAST_MESSAGE', payload.message);
+            // commit('UPDATE__TOAST_ALERT_TYPE', payload.type);
             // commit('UPDATE_TOAST_STATUS', true);
 
             commit('ADD_TOAST', {
                 id: Date.now(),
-                message,
-                type
+                message: payload.message,
+                type: payload.type
             });
 
             setTimeout(() => {
