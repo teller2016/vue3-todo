@@ -55,14 +55,6 @@
       Cancel
     </button>
   </form>
-
-  <transition name="fade">
-    <Toast
-      v-if="showToast"
-      :message="toastMessage"
-      :type="toastAlertType"
-    ></Toast>
-  </transition>
 </template>
 
 <script>
@@ -70,13 +62,11 @@ import axios from "@/axios";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import _ from "lodash";
-import Toast from "@/components/Toast.vue";
 import { useToast } from "@/composables/toast";
 import Input from "@/components/Input.vue";
 
 export default {
   components: {
-    Toast,
     Input
   },
   props: {
@@ -169,9 +159,12 @@ export default {
           `Successfully ` + (props.editing ? "Updated!" : "Created!");
         triggerToast(message);
 
-        // router.push({
-        //   name: "Todos",
-        // });
+        if (!props.editing) {
+          router.push({
+            name: "Todos",
+          });
+        }
+
       } catch (error) {
         console.log(error);
         triggerToast("Server Error!", "danger");
@@ -196,22 +189,5 @@ export default {
 <style scoped>
 .text-red {
   color: red;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-30px);
-}
-
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-  transform: translateY(0px);
 }
 </style>

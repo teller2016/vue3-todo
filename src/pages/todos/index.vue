@@ -61,26 +61,18 @@
       </ul>
     </nav>
   </div>
-
-  <Toast
-    v-if="showToast"
-    :message="toastMessage"
-    :type="toastAlertType"
-  ></Toast>
 </template>
 
 <script>
 import { ref, computed, watch } from "vue";
 import TodoList from "@/components/TodoList.vue";
 import axios from "@/axios";
-import Toast from "@/components/Toast.vue";
 import { useToast } from "../../composables/toast";
 import { useRouter } from "vue-router";
 
 export default {
   components: {
     TodoList,
-    Toast,
   },
   setup() {
     const router = useRouter();
@@ -105,7 +97,7 @@ export default {
       getTodos(1);
     };
 
-    const { showToast, toastMessage, triggerToast } = useToast();
+    const { triggerToast } = useToast();
 
     // 페이지 개수
     const numberOfTodos = ref(0);
@@ -199,8 +191,6 @@ export default {
       numberOfPages,
       currentPage,
       searchTodo,
-      showToast,
-      toastMessage,
       moveToCreatePage,
     };
   },
